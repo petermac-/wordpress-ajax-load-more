@@ -4,7 +4,7 @@ Donate link: http://connekthq.com/donate/
 Tags: ajax, query, loop, paging, filter, infinite scroll, infinite, dynamic, jquery, shortcode builder, shortcode, search, tags, category, post types, taxonomy, meta_query, post format, wmpl, archives, date
 Requires at least: 3.6
 Tested up to: 4.1.1
-Stable tag: 2.6.0
+Stable tag: 2.6.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,12 +17,11 @@ Build complex WordPress queries using our shortcode builder then add the shortco
  
 
 = Features =
-
-* **Multiple Instances** - One, two, three or ten - you can now include multiple instances of Ajax Load More on a single page.
 * **Shortcode Builder** - Easily create your own Ajax Load More shortcode by adjusting the various WordPress query parameters in our easy-to-use shortcode builder.(see Shortcode Parameters).
 * **Query Parameters** - Ajax Load More allows you to query WordPress by many different content types. Query by Post Type, Post Format, Date, Category, Tags, Custom Taxonomies, Search Term, Authors and more!!
 * **Customizable Repeater Templates** - Edit and extend the functionality of Ajax Load More by creating your own repeater template to match the look and feel of your website (see screenshots).
 * **Setting Panel** - Customize your version of Ajax Load More by updating various plugin settings (see screenshots).
+* **Multiple Instances** - You can include multiple instances of Ajax Load More on a single page, post or template.
 
 Check out the **[demo site](http://connekthq.com/plugins/ajax-load-more/)** for more information!
 
@@ -50,10 +49,12 @@ Ajax Load More accepts a number of parameters that are passed to the WordPress q
 *   **meta_value** - Custom field value. Default = null
 *   **meta_compare** - Operator to compare meta_key and meta_value against (IN/NOT IN/=/!=/>/>=/</<= etc.). Default = ‘IN’
 *   **author** - Query by author id. Default = null
+*   **post__in** - Comma separated list of post ID’s to include in query. Default = null 
+*   **exclude** - Comma separated list of post ID’s to exclude from query. Default = null 
 *   **search** - Query search term (‘s’). Default = null
+*   **post_status** - Select status of the post. Default = 'publish' 
 *   **order** - Display posts in ASC(ascending) or DESC(descending) order. Default = ‘DESC’
 *   **orderby** - Order posts by date, title, name, menu order, random, author, post ID or comment count.  Default = ‘date’
-*   **exclude** - Comma separated list of post ID’s to exclude from query. Default = null 
 *   **offset** - Offset the initial query (number). Default = ’0′
 *   **posts_per_page** - Number of posts to load with each Ajax request. Default = ’5′
 *   **scroll** - Load more posts as the user scrolls the page (true/false). Default = ‘true’
@@ -82,6 +83,7 @@ Ajax Load More accepts a number of parameters that are passed to the WordPress q
 * **[Default](http://connekthq.com/plugins/ajax-load-more/)** - Out of the box functionality and styling
 * **[Destroy After](http://connekthq.com/plugins/ajax-load-more/examples/destroy-after/)** - Remove Ajax Load More functionality after 'n' number of pages
 * **[Fade Transition](http://connekthq.com/plugins/ajax-load-more/examples/fade-transition/)** - Elements fade in as posts are loaded
+* **[Filtering](http://connekthq.com/plugins/ajax-load-more/examples/filtering/)** - Reset and filter an Ajax Load More instance
 * **[Mansory](http://connekthq.com/plugins/ajax-load-more/examples/masonry/)** - Creating a flexible grid layout with Masonry JS
 * **[Multiple Instances](http://connekthq.com/plugins/ajax-load-more/examples/multiple-instances/)** - Include multiple Ajax Load More' on a single page
 * **[Pause Loading](http://connekthq.com/plugins/ajax-load-more/examples/pause-loading/)** - Posts will not load until initiated by the user
@@ -117,22 +119,28 @@ Ajax Load More accepts a number of parameters that are passed to the WordPress q
 ***
 
 = Callback Functions =
-The following functions are avaialble to be dispatched by Ajax Load More. 
+The following functions are available to be dispatched by Ajax Load More. 
+[Get More Information](https://connekthq.com/plugins/ajax-load-more/docs/callback-functions/)
 
 
 **Ajax Complete** - The almComplete() function is triggered after every *successful* ajax call made by Ajax Load More.
-To utilize the almComplete() function simply place the following code inside your sites javascript file.
 
     $.fn.almComplete = function(alm){
     	// Your on complete code goes here
-    }
+    };
     
-**Ajax Empty** - The almEmpty() function is triggered if there are zero results returned in the initial query.
-To utilize the almEmpty() function simply place the following code inside your sites javascript file.
+**ALM Empty** - The almEmpty() function is triggered if there are zero results returned in the initial query.
 
     $.fn.almEmpty = function(alm){
        console.log('Sorry, but we could not locate any posts that matched your criteria.');
-    }
+    };
+
+***    
+**ALM Filter Complete** - The almFilterComplete() function is triggered after a successful call to the public function almFilter().
+
+    $.fn.almFilterComplete = function(){
+        console.log('Ajax Load More filter has completed!'); 
+    };
 
 ***
     
@@ -242,6 +250,18 @@ How to install Ajax Load More.
 
 == Changelog ==
 
+
+= 2.6.2 =
+* NEW - Adding new ALM setting to move user to top of page on window load.
+* FIX - Fixed issue with Cache + SEO where initial user might end up caching multiple pages in a single query if the page requested was greater than 1.
+* FIX - Fix for scrolling to load posts when max_pages = 0 - issue was introduced in release 2.6.1
+
+= 2.6.1 =
+* NEW - Public function, almFilter(type, speed, data) function which will allow for filtering/resetting of a ajax load more object.
+* NEW - Callback function, almFilterComplete() function which is dispatched after a successful almFilter() event.
+* NEW - Adding 'post__in' parameter. You can now curate queries based on a comma separated list of post ids.
+* UPDATE - Updating data() variables in ajax-load-more.js to allow for manipulation via JS.
+* FIX - Fix for cache parameter always true in ajax-load-more.js.
 
 = 2.6.0 =
 * NEW - Adding scroll_distance parameter - easily adjust the distance from the bottom of the page that will trigger loading of posts.

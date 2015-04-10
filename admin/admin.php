@@ -77,8 +77,8 @@ function alm_core_update() {
 		   //Write to repeater file
 		   $data = $wpdb->get_var("SELECT repeaterDefault FROM $table_name WHERE name = 'default'");
 			$f = ALM_PATH. 'core/repeater/default.php'; // File
-			$o = fopen($f, 'w+'); //Open file
-			$w = fwrite($o, $data); //Save the file
+			$o = fopen($f, 'w+') or die(__('Unable to open the default repeater template.', ALM_NAME)); //Open file
+			$w = fwrite($o, $data) or die(__('Unable to save the default repeater.', ALM_NAME)); //Save the file
 			$r = fread($o, 100000); //Read it
 			fclose($o); //now close it
 	    }
@@ -528,6 +528,14 @@ function alm_admin_init(){
 		'alm_general_settings' 
 	);
 	
+	add_settings_field(  // Scroll to top on load
+		'_alm_scroll_top', 
+		__('Top of Page', ALM_NAME ), 
+		'_alm_scroll_top_callback', 
+		'ajax-load-more', 
+		'alm_general_settings' 
+	);	
+	
 	add_settings_field(  // Disbale CSS
 		'_alm_disable_css', 
 		__('Disable CSS', ALM_NAME ), 
@@ -690,7 +698,7 @@ function alm_hide_btn_callback(){
 *  alm_disable_dynamic_callback
 *  Disable the dynamic population of categories, tags and authors
 *
-*  @since 3.0.0
+*  @since 2.6.0
 */
 
 function alm_disable_dynamic_callback(){
@@ -847,6 +855,27 @@ function alm_btn_class_callback(){
 	   
     </script>
 	<?php
+}
+
+
+
+/*
+*  _alm_scroll_top_callback
+*  Move window to top of screen on page load
+*
+*  @since 2.6.0
+*/
+
+function _alm_scroll_top_callback(){
+	$options = get_option( 'alm_settings' );		
+	if(!isset($options['_alm_scroll_top'])) 
+	   $options['_alm_scroll_top'] = '0';
+	
+	$html =  '<input type="hidden" name="alm_settings[_alm_scroll_top]" value="0" />';
+	$html .= '<input type="checkbox" name="alm_settings[_alm_scroll_top]" id="_alm_scroll_top" value="1"'. (($options['_alm_scroll_top']) ? ' checked="checked"' : '') .' />';
+	$html .= '<label for="_alm_scroll_top">'.__('On initial page load, move the user\'s browser window to the top of the screen.<span style="display:block">This <u>may</u> help prevent the loading of unnecessary posts.', ALM_NAME).'</label>';	
+	
+	echo $html;
 }
 
 
